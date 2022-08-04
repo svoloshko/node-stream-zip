@@ -22,6 +22,12 @@ declare namespace StreamZip {
          url?: string;
 
         /**
+         * Alternatively, zip file length can be passed here
+         * @default undefined
+         */
+        fileSize?: number;
+
+        /**
          * You will be able to work with entries inside zip archive,
          * otherwise the only way to access them is entry event
          * @default true

@@ -170,16 +170,26 @@ const StreamZip = function (config) {
 
     function readFile() {
         if(url){
-            const req = selectUrlLib(url).request(url, {method: 'HEAD'}, (res) => {
-                fileSize = parseInt(res.headers['content-length'], 10)
+            if (config.fileSize) {
+                fileSize = config.fileSize;
                 chunkSize = config.chunkSize || Math.round(fileSize / 1000);
                 chunkSize = Math.max(
-                    Math.min(chunkSize, Math.min(128 * 1024, fileSize)),
-                    Math.min(1024, fileSize)
+                  Math.min(chunkSize, Math.min(128 * 1024, fileSize)),
+                  Math.min(1024, fileSize)
                 );
                 readCentralDirectory();
-            })
-            req.end()
+            } else {
+                const req = selectUrlLib(url).request(url, {method: 'HEAD'}, (res) => {
+                    fileSize = parseInt(res.headers['content-length'], 10)
+                    chunkSize = config.chunkSize || Math.round(fileSize / 1000);
+                    chunkSize = Math.max(
+                      Math.min(chunkSize, Math.min(128 * 1024, fileSize)),
+                      Math.min(1024, fileSize)
+                    );
+                    readCentralDirectory();
+                })
+                req.end()
+            }
         } else {
             fs.fstat(fd, (err, stat) => {
                 if (err) {
